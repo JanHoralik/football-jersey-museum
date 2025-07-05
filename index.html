@@ -7,54 +7,23 @@
   <style>
     body { font-family: sans-serif; padding: 1rem; background: #f4f4f4; }
     h1 { margin-bottom: 0.5rem; }
-    #images { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem; }
-    img { width: 100%; height: auto; border: 1px solid #ccc; border-radius: 8px; }
     input, button { padding: 0.5rem; font-size: 1rem; margin-top: 0.5rem; width: 100%; max-width: 500px; }
+    .group { margin-top: 2rem; }
+    .group h2 { font-size: 1.2rem; margin-bottom: 0.5rem; border-bottom: 1px solid #ccc; padding-bottom: 0.25rem; }
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+    .image-grid img {
+      width: 100%;
+      height: auto;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: white;
+    }
   </style>
 </head>
 <body>
   <h1>Football Jersey Museum</h1>
-  <p>Viewing images from <strong>JanHoralik/football-jersey-museum</strong> (branch: <code>main</code>)</p>
-
-  <input id="folder" type="text" placeholder="Enter image folder path, e.g. images/2022/">
-  <button onclick="loadImages()">Load Images</button>
-
-  <div id="images"></div>
-
-  <script>
-    async function loadImages() {
-      const folder = document.getElementById('folder').value.trim();
-      const repo = 'JanHoralik/football-jersey-museum';
-      const branch = 'main';
-      const apiURL = `https://api.github.com/repos/${repo}/contents/${folder}?ref=${branch}`;
-      const imagesDiv = document.getElementById('images');
-      imagesDiv.innerHTML = 'Loading...';
-
-      try {
-        const res = await fetch(apiURL);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const files = await res.json();
-
-        const imageFiles = files.filter(file =>
-          file.type === 'file' && /\.(png|jpe?g|gif|webp)$/i.test(file.name)
-        );
-
-        imagesDiv.innerHTML = '';
-        if (imageFiles.length === 0) {
-          imagesDiv.innerHTML = 'No images found in folder.';
-          return;
-        }
-
-        for (const file of imageFiles) {
-          const img = document.createElement('img');
-          img.src = file.download_url;
-          img.alt = file.name;
-          imagesDiv.appendChild(img);
-        }
-      } catch (e) {
-        imagesDiv.innerHTML = 'Error loading images: ' + e.message;
-      }
-    }
-  </script>
-</body>
-</html>
+  <p>Viewing
