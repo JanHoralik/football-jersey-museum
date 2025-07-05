@@ -57,7 +57,11 @@
 
 	files.forEach(file => {
   	  const match = file.name.match(/^(\d{3})-.*([fb])\.[^.]+$/i);
-  	  if (!match) return;  // přeskočit nevalidní
+	  if (!match) {
+	    imagesDiv.innerHTML = 'Not loaded '+file.name;
+            return;  // přeskočit nevalidní
+          }
+	  
 	  imagesDiv.innerHTML = 'Loaded '+file.name;
   	  const prefix = match[1];
   	  const side = match[2].toLowerCase();
