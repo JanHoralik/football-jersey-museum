@@ -5,11 +5,30 @@
   <title>Football Jersey Museum</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: sans-serif; padding: 1rem; background: #f4f4f4; }
-    h1 { margin-bottom: 0.5rem; }
-    button { padding: 0.5rem; font-size: 1rem; margin-top: 0.5rem; width: 100%; max-width: 500px; }
-    .group { margin-top: 2rem; }
-    .group h2 { font-size: 1.2rem; margin-bottom: 0.5rem; border-bottom: 1px solid #ccc; padding-bottom: 0.25rem; }
+    body {
+      font-family: sans-serif;
+      padding: 1rem;
+      background: #f4f4f4;
+      max-width: 900px;
+      margin: auto;
+    }
+    h1 {
+      margin-bottom: 0.5rem;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      margin-top: 1rem;
+    }
+    .group {
+      margin-top: 2rem;
+    }
+    .group h2 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 0.25rem;
+    }
     .image-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -26,7 +45,7 @@
 </head>
 <body>
   <h1>Football Jersey Museum</h1>
-  <p>Viewing images from <strong>data/images</strong> in repository <code>JanHoralik/football-jersey-museum</code> (branch: <code>main</code>)</p>
+  <p>Viewing images from <code>data/images</code> in repository <strong>JanHoralik/football-jersey-museum</strong> (branch: <code>main</code>)</p>
 
   <button onclick="loadImages()">Load Images</button>
 
@@ -42,63 +61,61 @@
       imagesDiv.innerHTML = 'Loading...';
 
       try {
+        console.log("Fetching:", apiURL);
         const res = await fetch(apiURL);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const files = await res.json();
+        if (!res.ok) {
+          const msg = await res.text();
+          imagesDiv.innerHTML = `Error loading: ${res.status}<br>${msg}`;
+          return;
+        }
 
+        const files = await res.json();
         const imageFiles = files.filter(file =>
           file.type === 'file' && /\.(png|jpe?g|gif|webp)$/i.test(file.name)
         );
 
-        if (imageFiles.length === 0) {
-          imagesDiv.innerHTML = 'No images found in folder.';
-          return;
+        const groups = {};
+        for (const file of imageFiles) {
+          const match = file.name.match(/^(\d{3})-.*([fb])\.[^.]+$/i);
+          if (!match) continue;
+          const prefix = match[1];
+          const side = match[2].toLowerCase();
+          if (!groups[prefix]) groups[prefix] = { f: null, b: null };
+          groups[prefix][side] = file;
         }
 
-	files.forEach(file => {
-  	  const match = file.name.match(/^(\d{3})-.*([fb])\.[^.]+$/i);
-	  if (!match) {
-	    imagesDiv.innerHTML = 'Not loaded '+file.name;
-            console.log('Not loaded');
-            return;  // přeskočit nevalidní
-          }
-	 
-	  console.log('Loaded');
-	  imagesDiv.innerHTML = 'Loaded '+file.name;
-  	  const prefix = match[1];
-  	  const side = match[2].toLowerCase();
-  	  if (!groups[prefix]) groups[prefix] = { f: null, b: null };
-  	  groups[prefix][side] = file;
-	});
-        
+        imagesDiv.innerHTML = '';
+        const sortedKeys = Object.keys(groups).sort();
 
-	for (const [prefix, pair] of Object.entries(groups)) {
-  	  const groupDiv = document.createElement('div');
-  	  groupDiv.className = 'group';
+        for (const prefix of sortedKeys) {
+          const pair = groups[prefix];
+          const groupDiv = document.createElement('div');
+          groupDiv.className = 'group';
 
-  	  const header = document.createElement('h2');
-  	  header.textContent = `Group ${prefix}`;
-  	  groupDiv.appendChild(header);
+          const header = document.createElement('h2');
+          header.textContent = `Group ${prefix}`;
+          groupDiv.appendChild(header);
 
-  	  const grid = document.createElement('div');
-  	  grid.className = 'image-grid';
+          const grid = document.createElement('div');
+          grid.className = 'image-grid';
 
-  	  ['f', 'b'].forEach(side => {
-    	    const file = pair[side];
-    	    if (file) {
-      	      const img = document.createElement('img');
-      	      img.src = file.download_url;
-      	      img.alt = file.name;
-      	      grid.appendChild(img);
-    	    }
-  	  });
+          ['f', 'b'].forEach(side => {
+            const file = pair[side];
+            if (file) {
+              const img = document.createElement('img');
+              img.src = file.download_url;
+              img.alt = file.name;
+              grid.appendChild(img);
+            }
+          });
 
-  	  groupDiv.appendChild(grid);
-  	  imagesDiv.appendChild(groupDiv);
-	}
-                
-      } catch (e) {
-        imagesDiv.innerHTML = 'Error loading images: ' + e.message;
+          groupDiv.appendChild(grid);
+          imagesDiv.appendChild(groupDiv);
+        }
+
+      } catch (err) {
+        console.error("Fetch error:", err);
+        imagesDiv.innerHTML = 'Unexpected error: ' + err.message;
       }
     }
   </script>
