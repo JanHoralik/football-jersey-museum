@@ -55,35 +55,42 @@
           return;
         }
 
-        const groups = {};
-        imageFiles.forEach(file => {
-          const prefix = file.name.slice(0, 3);
-          if (!groups[prefix]) groups[prefix] = [];
-          groups[prefix].push(file);
-        });
+	files.forEach(file => {
+  	  const match = file.name.match(/^(\d{3})-.*([fb])\.[^.]+$/i);
+  	  if (!match) return;  // přeskočit nevalidní
+  	    const prefix = match[1];
+  	    const side = match[2].toLowerCase();
+  	    if (!groups[prefix]) groups[prefix] = { f: null, b: null };
+  	      groups[prefix][side] = file;
+	});
+        
 
-        imagesDiv.innerHTML = '';
-        for (const [prefix, files] of Object.entries(groups)) {
-          const groupDiv = document.createElement('div');
-          groupDiv.className = 'group';
+	for (const [prefix, pair] of Object.entries(groups)) {
+  	  const groupDiv = document.createElement('div');
+  	  groupDiv.className = 'group';
 
-          const header = document.createElement('h2');
-          header.textContent = `Group ${prefix}`;
-          groupDiv.appendChild(header);
+  	  const header = document.createElement('h2');
+  	  header.textContent = `Group ${prefix}`;
+  	  groupDiv.appendChild(header);
 
-          const grid = document.createElement('div');
-          grid.className = 'image-grid';
+  	  const grid = document.createElement('div');
+  	  grid.className = 'image-grid';
 
-          files.forEach(file => {
-            const img = document.createElement('img');
-            img.src = file.download_url;
-            img.alt = file.name;
-            grid.appendChild(img);
-          });
+  	  ['f', 'b'].forEach(side => {
+    	    const file = pair[side];
+    	    if (file) {
+      	      const img = document.createElement('img');
+      	      img.src = file.download_url;
+      	      img.alt = file.name;
+      	      grid.appendChild(img);
+    	    }
+  	  });
 
-          groupDiv.appendChild(grid);
-          imagesDiv.appendChild(groupDiv);
-        }
+  	  groupDiv.appendChild(grid);
+  	  imagesDiv.appendChild(groupDiv);
+	}
+                
+      }
       } catch (e) {
         imagesDiv.innerHTML = 'Error loading images: ' + e.message;
       }
