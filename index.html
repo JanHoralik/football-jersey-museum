@@ -65,6 +65,8 @@
         if (!res.ok) throw new Error("Image list fetch failed");
         const files = await res.json();
 
+        console.log("Loaded metadata 2:", metadata);
+        
         const groups = {};
         for (const file of files) {
           const match = file.name.match(/^(\d{1})-.*([fb])\.(jpg|png|jpeg)$/i);
@@ -77,6 +79,8 @@
           groups[prefix][suffix] = file;
         }
 
+        console.log("Loaded metadata 3:", metadata);
+        
         const sortedKeys = Object.keys(groups).sort();
         console.log('sortedKeys:'+sortedKeys);
         
