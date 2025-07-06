@@ -34,7 +34,7 @@
           const row = lines[i].split(',');
           const idStr = row[0].replace(/\D/g, "");
           const id = parseInt(idStr, 10)
-          const country = row[1];
+          const country = row[1].replace('"', "");
           const player = row[2];
           console.log('id'+id);
           if (id) {
