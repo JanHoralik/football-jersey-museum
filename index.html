@@ -58,6 +58,7 @@
       imagesDiv.innerHTML = '';
 
       const metadata = await loadMetadata();
+      console.log("Loaded metadata after await:", metadata);
 
       try {
         const res = await fetch(apiUrl);
