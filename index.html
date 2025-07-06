@@ -69,9 +69,9 @@
       imagesDiv.innerHTML = '';
 
       const metadata = await loadMetadata();
+      console.log("Loaded metadata2:", metadata);
 
       try {
-        console.log("Loaded metadata2:", metadata);
         const res = await fetch(apiUrl);
         if (!res.ok) throw new Error("Image list fetch failed");
         const files = await res.json();
