@@ -37,15 +37,12 @@
         const res = await fetch(sheetCSVUrl);
         if (!res.ok) throw new Error("Metadata fetch failed");
         const csvText = await res.text();
-        const lines = csvText.trim().split('\n').map(line => line.split(','));
-        const headers = lines[0];
-        const jerseyIdIndex = headers.indexOf("jersey_id");
-        const countryIndex = headers.indexOf("country");
+        const lines = csvText.trim().split('\n');
 
         for (let i = 1; i < lines.length; i++) {
-          const row = lines[i];
-          const id = row[jerseyIdIndex];
-          const country = row[countryIndex];
+          const row = lines[i].split(',');
+          const id = row[0];
+          const country = row[1];
           if (id && country) metadata[id] = country;
         }
 
