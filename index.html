@@ -41,9 +41,13 @@
 
         for (let i = 1; i < lines.length; i++) {
           const row = lines[i].split(',');
+          console.log("row: "+row);
           const id = row[0];
+          console.log("id: "+id);
           const country = row[1];
+          console.log("country: "+country);
           if (id && country) metadata[id] = country;
+          console.log("metadata[id]: "+metadata[id]);
         }
 
         console.log("Loaded metadata:", metadata);
