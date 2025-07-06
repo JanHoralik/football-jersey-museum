@@ -4,22 +4,14 @@
   <meta charset="UTF-8">
   <title>Football Jersey Museum</title>
   <style>
-    body {
-      font-family: sans-serif;
-      padding: 20px;
-    }
-    .group {
-      margin-bottom: 30px;
-    }
+    body { font-family: sans-serif; padding: 20px; }
+    .group { margin-bottom: 30px; }
     .image-grid {
       display: grid;
       grid-template-columns: repeat(2, auto);
       gap: 10px;
     }
-    img {
-      max-width: 100%;
-      height: auto;
-    }
+    img { max-width: 100%; height: auto; }
   </style>
 </head>
 <body>
@@ -33,7 +25,6 @@
       const metadata = {};
 
       try {
-        console.log("Fetching metadata:", sheetCSVUrl);
         const res = await fetch(sheetCSVUrl);
         if (!res.ok) throw new Error("Metadata fetch failed");
         const csvText = await res.text();
@@ -41,17 +32,15 @@
 
         for (let i = 1; i < lines.length; i++) {
           const row = lines[i].split(',');
-          //console.log("row: "+row);
-          const id = row[0].replace(/\D/g, "");
-          //console.log("id: "+id);
+          const id = row[0];
           const country = row[1];
-          //console.log("country: "+country);
-          if (id && country) metadata[id] = country;
-          //console.log("metadata[id]: "+metadata[id]);
+          const player = row[2];
+          if (id) {
+            metadata[id] = { country, player };
+          }
         }
 
         console.log("Loaded metadata:", metadata);
-
       } catch (e) {
         console.error("Metadata loading error:", e);
       }
@@ -63,13 +52,12 @@
       const repoOwner = 'JanHoralik';
       const repoName = 'football-jersey-museum';
       const imagesFolder = 'data/images';
-
       const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${imagesFolder}`;
+
       const imagesDiv = document.getElementById('images');
       imagesDiv.innerHTML = '';
 
       const metadata = await loadMetadata();
-      //console.log("Loaded metadata2:", metadata);
 
       try {
         const res = await fetch(apiUrl);
@@ -89,19 +77,17 @@
         }
 
         const sortedKeys = Object.keys(groups).sort();
-        console.log("sortedKeys:", sortedKeys);
-        
+
         for (const prefix of sortedKeys) {
-          //console.log("prefix:", prefix);
-          //console.log("metadata[prefix]:", metadata[prefix]);
-          //console.log('metadata["001"]:', metadata["001"]);
           const pair = groups[prefix];
           const groupDiv = document.createElement('div');
           groupDiv.className = 'group';
 
           const header = document.createElement('h2');
-          const country = metadata[prefix] || 'Unknown';
-          header.textContent = `#${prefix} — ${country}`;
+          const meta = metadata[prefix] || {};
+          const country = meta.country || 'Unknown';
+          const player = meta.player || '';
+          header.textContent = `#${prefix} — ${country}` + (player ? ` — ${player}` : '');
           groupDiv.appendChild(header);
 
           const grid = document.createElement('div');
