@@ -32,7 +32,8 @@
 
         for (let i = 1; i < lines.length; i++) {
           const row = lines[i].split(',');
-          const id = row[0];
+          const idStr = row[0];
+          const id = parseInt(idStr, 10)
           const country = row[1];
           const player = row[2];
           if (id) {
