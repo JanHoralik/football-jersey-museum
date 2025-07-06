@@ -89,7 +89,8 @@
         }
 
         const sortedKeys = Object.keys(groups).sort();
-
+        console.log("sortedKeys:", sortedKeys);
+        
         for (const prefix of sortedKeys) {
           console.log("prefix:", prefix);
           console.log("metadata[prefix]:", metadata[prefix]);
