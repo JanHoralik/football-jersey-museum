@@ -91,6 +91,8 @@
         const sortedKeys = Object.keys(groups).sort();
 
         for (const prefix of sortedKeys) {
+          console.log("prefix:", prefix);
+          console.log("metadata[prefix]:", metadata[prefix]);
           const pair = groups[prefix];
           const groupDiv = document.createElement('div');
           groupDiv.className = 'group';
