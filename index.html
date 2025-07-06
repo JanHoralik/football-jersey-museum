@@ -85,13 +85,15 @@
         console.log('sortedKeys:'+sortedKeys);
         
         for (const prefix of sortedKeys) {
+
+          console.log("Loaded metadata 4:", metadata);
           const pair = groups[prefix];
           const groupDiv = document.createElement('div');
           groupDiv.className = 'group';
 
           const header = document.createElement('h2');
           const meta = metadata[prefix] || {};
-          console.log('metadata:'+metadata);
+          console.log("Loaded metadata 5:", metadata);
           console.log('prefix:'+prefix);
           console.log('metadata[1]:', metadata[1]);
           console.log('metadata["1"]:', metadata["1"]);
