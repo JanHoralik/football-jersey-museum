@@ -36,9 +36,11 @@
           const id = parseInt(idStr, 10)
           const country = row[1];
           const player = row[2];
+          console.log('id'+id);
           if (id) {
             metadata[id] = { country, player };
           }
+          console.log('metadata[id]: '+metadata[id]);
         }
 
         console.log("Loaded metadata:", metadata);
