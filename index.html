@@ -66,7 +66,7 @@
 
         const groups = {};
         for (const file of files) {
-          const match = file.name.match(/^(\d{3})-.*([fb])\.(jpg|png|jpeg)$/i);
+          const match = file.name.match(/^(\d{1})-.*([fb])\.(jpg|png|jpeg)$/i);
           if (!match) continue;
 
           const prefix = match[1];
