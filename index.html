@@ -77,7 +77,8 @@
         }
 
         const sortedKeys = Object.keys(groups).sort();
-
+        console.log('sortedKeys:'+sortedKeys);
+        
         for (const prefix of sortedKeys) {
           const pair = groups[prefix];
           const groupDiv = document.createElement('div');
