@@ -42,7 +42,7 @@
         for (let i = 1; i < lines.length; i++) {
           const row = lines[i].split(',');
           console.log("row: "+row);
-          const id = row[0];
+          const id = row[0].replace(/\D/g, "");
           console.log("id: "+id);
           const country = row[1];
           console.log("country: "+country);
