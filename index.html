@@ -34,8 +34,8 @@
           const row = lines[i].split(',');
           const idStr = row[0].replace(/\D/g, "");
           const id = parseInt(idStr, 10)
-          const country = row[1].replace('"', "");
-          const player = row[2];
+          const country = row[1].replace(/"/g, "");
+          const player = row[2].replace(/"/g, "");
           console.log('id'+id);
           if (id) {
             metadata[id] = { country, player };
