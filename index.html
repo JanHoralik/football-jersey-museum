@@ -41,13 +41,13 @@
 
         for (let i = 1; i < lines.length; i++) {
           const row = lines[i].split(',');
-          #console.log("row: "+row);
+          //console.log("row: "+row);
           const id = row[0].replace(/\D/g, "");
-          #console.log("id: "+id);
+          //console.log("id: "+id);
           const country = row[1];
-          #console.log("country: "+country);
+          //console.log("country: "+country);
           if (id && country) metadata[id] = country;
-          #console.log("metadata[id]: "+metadata[id]);
+          //console.log("metadata[id]: "+metadata[id]);
         }
 
         console.log("Loaded metadata:", metadata);
@@ -92,8 +92,8 @@
         console.log("sortedKeys:", sortedKeys);
         
         for (const prefix of sortedKeys) {
-          #console.log("prefix:", prefix);
-          #console.log("metadata[prefix]:", metadata[prefix]);
+          //console.log("prefix:", prefix);
+          //console.log("metadata[prefix]:", metadata[prefix]);
           console.log("metadata["001"]:", metadata["001"]);
           const pair = groups[prefix];
           const groupDiv = document.createElement('div');
