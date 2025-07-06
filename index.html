@@ -49,6 +49,8 @@
           if (id && country) metadata[id] = country;
         }
 
+        console.log("Loaded metadata:", metadata);
+
       } catch (e) {
         console.error("Metadata loading error:", e);
       }
