@@ -3,88 +3,87 @@
 <head>
   <meta charset="UTF-8">
   <title>Football Jersey Museum</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       font-family: sans-serif;
-      padding: 1rem;
-      background: #f4f4f4;
-      max-width: 900px;
-      margin: auto;
-    }
-    h1 {
-      margin-bottom: 0.5rem;
-    }
-    button {
-      padding: 0.5rem 1rem;
-      font-size: 1rem;
-      margin-top: 1rem;
+      padding: 20px;
     }
     .group {
-      margin-top: 2rem;
-    }
-    .group h2 {
-      font-size: 1.2rem;
-      margin-bottom: 0.5rem;
-      border-bottom: 1px solid #ccc;
-      padding-bottom: 0.25rem;
+      margin-bottom: 30px;
     }
     .image-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
+      grid-template-columns: repeat(2, auto);
+      gap: 10px;
     }
-    .image-grid img {
-      width: 100%;
+    img {
+      max-width: 100%;
       height: auto;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      background: white;
     }
   </style>
 </head>
 <body>
   <h1>Football Jersey Museum</h1>
-  <p>Viewing images from <code>data/images</code> in repository <strong>JanHoralik/football-jersey-museum</strong> (branch: <code>main</code>)</p>
-
-  <button onclick="loadImages()">Load Images</button>
-
+  <button onclick="loadImages()">Load images</button>
   <div id="images"></div>
 
   <script>
-    async function loadImages() {
-      const folder = 'data/images';
-      const repo = 'JanHoralik/football-jersey-museum';
-      const branch = 'main';
-      const apiURL = `https://api.github.com/repos/${repo}/contents/${folder}?ref=${branch}`;
-      const imagesDiv = document.getElementById('images');
-      imagesDiv.innerHTML = 'Loading...';
+    async function loadMetadata() {
+      const sheetCSVUrl = 'https://docs.google.com/spreadsheets/d/15BhVTLtBm35zm_1iLyD9GKlb_-sgmJ2EFVWadsKptnI/gviz/tq?tqx=out:csv';
+      const metadata = {};
 
       try {
-        console.log("Fetching:", apiURL);
-        const res = await fetch(apiURL);
-        if (!res.ok) {
-          const msg = await res.text();
-          imagesDiv.innerHTML = `Error loading: ${res.status}<br>${msg}`;
-          return;
+        console.log("Fetching metadata:", sheetCSVUrl);
+        const res = await fetch(sheetCSVUrl);
+        if (!res.ok) throw new Error("Metadata fetch failed");
+        const csvText = await res.text();
+        const lines = csvText.trim().split('\n').map(line => line.split(','));
+        const headers = lines[0];
+        const jerseyIdIndex = headers.indexOf("jersey_id");
+        const countryIndex = headers.indexOf("country");
+
+        for (let i = 1; i < lines.length; i++) {
+          const row = lines[i];
+          const id = row[jerseyIdIndex];
+          const country = row[countryIndex];
+          if (id && country) metadata[id] = country;
         }
 
+      } catch (e) {
+        console.error("Metadata loading error:", e);
+      }
+
+      return metadata;
+    }
+
+    async function loadImages() {
+      const repoOwner = 'JanHoralik';
+      const repoName = 'football-jersey-museum';
+      const imagesFolder = 'data/images';
+
+      const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${imagesFolder}`;
+      const imagesDiv = document.getElementById('images');
+      imagesDiv.innerHTML = '';
+
+      const metadata = await loadMetadata();
+
+      try {
+        const res = await fetch(apiUrl);
+        if (!res.ok) throw new Error("Image list fetch failed");
         const files = await res.json();
-        const imageFiles = files.filter(file =>
-          file.type === 'file' && /\.(png|jpe?g|gif|webp)$/i.test(file.name)
-        );
 
         const groups = {};
-        for (const file of imageFiles) {
-          const match = file.name.match(/^(\d{3})-.*([fb])\.[^.]+$/i);
+        for (const file of files) {
+          const match = file.name.match(/^(\d{3})-.*([fb])\.(jpg|png|jpeg)$/i);
           if (!match) continue;
+
           const prefix = match[1];
-          const side = match[2].toLowerCase();
-          if (!groups[prefix]) groups[prefix] = { f: null, b: null };
-          groups[prefix][side] = file;
+          const suffix = match[2].toLowerCase();
+
+          if (!groups[prefix]) groups[prefix] = {};
+          groups[prefix][suffix] = file;
         }
 
-        imagesDiv.innerHTML = '';
         const sortedKeys = Object.keys(groups).sort();
 
         for (const prefix of sortedKeys) {
@@ -93,7 +92,8 @@
           groupDiv.className = 'group';
 
           const header = document.createElement('h2');
-          header.textContent = `Group ${prefix}`;
+          const country = metadata[prefix] || 'Unknown';
+          header.textContent = `#${prefix} — ${country}`;
           groupDiv.appendChild(header);
 
           const grid = document.createElement('div');
@@ -113,9 +113,8 @@
           imagesDiv.appendChild(groupDiv);
         }
 
-      } catch (err) {
-        console.error("Fetch error:", err);
-        imagesDiv.innerHTML = 'Unexpected error: ' + err.message;
+      } catch (e) {
+        console.error("Image loading error:", e);
       }
     }
   </script>
